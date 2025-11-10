@@ -1,0 +1,2741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class 9 Admin Panel</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #003C71;
+            --secondary: #002447;
+            --accent: #E4A93C;
+            --light: #EFECE3;
+            --soft-blue: #8FA8C5;
+            --dark: #212529;
+            --success: #4bb543;
+            --warning: #E4A93C;
+            --danger: #dc3545;
+            --gray: #6c757d;
+            --sidebar-width: 250px;
+            --header-height: 70px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            overflow-x: hidden;
+        }
+
+        /* Login Page Styles */
+        .login-container {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--soft-blue) 100%);
+            padding: 20px;
+        }
+
+        .login-box {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 50px 40px;
+            width: 100%;
+            max-width: 450px;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .login-logo-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--accent), #F5C84D);
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 42px;
+            font-weight: bold;
+            color: white;
+            box-shadow: 0 8px 20px rgba(228, 169, 60, 0.4);
+            margin-bottom: 15px;
+        }
+
+        .login-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .login-subtitle {
+            color: var(--gray);
+            font-size: 1rem;
+        }
+
+        .login-form {
+            margin-top: 30px;
+        }
+
+        .login-form-group {
+            margin-bottom: 25px;
+        }
+
+        .login-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 1rem;
+        }
+
+        .login-input {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid var(--soft-blue);
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .login-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px rgba(228, 169, 60, 0.15);
+        }
+
+        .login-btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--accent), #F5C84D);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 6px 20px rgba(228, 169, 60, 0.4);
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(228, 169, 60, 0.5);
+        }
+
+        .login-error {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: var(--danger);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            border: 1px solid var(--danger);
+            text-align: center;
+        }
+
+        /* Main App Container */
+        .app-container {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .app-container.active {
+            display: flex;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: linear-gradient(180deg, var(--primary), var(--secondary));
+            color: white;
+            min-height: 100vh;
+            position: fixed;
+            transition: var(--transition);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .logo {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--accent), #F5C84D);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: bold;
+            color: white;
+            box-shadow: 0 4px 10px rgba(228, 169, 60, 0.3);
+        }
+
+        .sidebar-header h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .sidebar-subtitle {
+            font-size: 0.85rem;
+            color: var(--soft-blue);
+            margin-top: 5px;
+        }
+
+        .sidebar-menu {
+            padding: 20px 0;
+            flex: 1;
+        }
+
+        .menu-item {
+            padding: 15px 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            transition: var(--transition);
+            border-left: 4px solid transparent;
+        }
+
+        .menu-item:hover {
+            background-color: rgba(228, 169, 60, 0.15);
+            border-left: 4px solid var(--accent);
+        }
+
+        .menu-item.active {
+            background-color: rgba(228, 169, 60, 0.2);
+            border-left: 4px solid var(--accent);
+        }
+
+        .menu-item i {
+            font-size: 1.2rem;
+            width: 25px;
+            color: var(--soft-blue);
+        }
+
+        .menu-item.active i,
+        .menu-item:hover i {
+            color: var(--accent);
+        }
+
+        .logout-btn {
+            margin: 20px;
+            padding: 12px;
+            background: rgba(220, 53, 69, 0.2);
+            color: white;
+            border: 2px solid rgba(220, 53, 69, 0.5);
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .logout-btn:hover {
+            background: var(--danger);
+            border-color: var(--danger);
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            transition: var(--transition);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            height: var(--header-height);
+            background-color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 99;
+        }
+
+        .header-left h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--soft-blue));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .content {
+            padding: 30px;
+            flex: 1;
+        }
+
+        /* Dashboard Styles */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 25px;
+        }
+
+        .grid-item {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            padding: 25px;
+            text-align: center;
+            transition: var(--transition);
+            cursor: pointer;
+            border-top: 4px solid var(--primary);
+        }
+
+        .grid-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(228, 169, 60, 0.2);
+            border-top: 4px solid var(--accent);
+        }
+
+        .grid-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(0, 60, 113, 0.1), rgba(143, 168, 197, 0.1));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            color: var(--primary);
+            font-size: 1.8rem;
+        }
+
+        .grid-item:hover .grid-icon {
+            background: linear-gradient(135deg, rgba(228, 169, 60, 0.2), rgba(245, 200, 77, 0.2));
+            color: var(--accent);
+        }
+
+        .grid-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+
+        .grid-desc {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        /* Subject Detail View */
+        .subject-detail {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .back-btn {
+            background: var(--soft-blue);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .back-btn:hover {
+            background: var(--primary);
+        }
+
+        .detail-header {
+            border-bottom: 3px solid var(--accent);
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+
+        .detail-title {
+            font-size: 2rem;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .content-list {
+            margin-top: 20px;
+        }
+
+        .content-item {
+            background: var(--light);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--accent);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .content-item-info {
+            flex: 1;
+        }
+
+        .content-item-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .content-item-desc {
+            color: var(--gray);
+            margin-bottom: 10px;
+        }
+
+        .content-item-meta {
+            display: flex;
+            gap: 15px;
+            font-size: 0.9rem;
+            color: var(--soft-blue);
+        }
+
+        .content-item-type {
+            background: var(--accent);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .content-item-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .content-action-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .view-btn {
+            background-color: rgba(0, 60, 113, 0.1);
+            color: var(--primary);
+        }
+
+        .view-btn:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .delete-content-btn {
+            background-color: rgba(220, 53, 69, 0.2);
+            color: #dc3545;
+        }
+
+        .delete-content-btn:hover {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        /* User Manager Styles */
+        .user-manager-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .user-manager-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .add-user-btn {
+            background: linear-gradient(135deg, var(--accent), #F5C84D);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: var(--transition);
+            box-shadow: 0 4px 10px rgba(228, 169, 60, 0.3);
+        }
+
+        .add-user-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(228, 169, 60, 0.4);
+        }
+
+        .user-table-container {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            overflow-x: auto;
+        }
+
+        .user-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+
+        .user-table th {
+            background: linear-gradient(135deg, var(--primary), var(--soft-blue));
+            color: white;
+            padding: 15px 20px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .user-table td {
+            padding: 15px 20px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .user-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .user-table tbody tr:hover {
+            background-color: var(--light);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .edit-btn, .delete-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .edit-btn {
+            background-color: rgba(228, 169, 60, 0.2);
+            color: #B8842A;
+        }
+
+        .edit-btn:hover {
+            background-color: var(--accent);
+            color: white;
+        }
+
+        .delete-btn {
+            background-color: rgba(220, 53, 69, 0.2);
+            color: #dc3545;
+        }
+
+        .delete-btn:hover {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        /* Content Management Styles */
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--accent);
+        }
+
+        .section-subtitle {
+            font-size: 1rem;
+            color: var(--gray);
+            margin-bottom: 30px;
+        }
+
+        .content-section {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--soft-blue);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: var(--transition);
+            background-color: white;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(228, 169, 60, 0.2);
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .file-upload-container {
+            border: 2px dashed var(--soft-blue);
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            transition: var(--transition);
+            cursor: pointer;
+            background-color: rgba(143, 168, 197, 0.05);
+        }
+
+        .file-upload-container:hover {
+            border-color: var(--accent);
+            background-color: rgba(228, 169, 60, 0.05);
+        }
+
+        .file-upload-icon {
+            font-size: 2.5rem;
+            color: var(--accent);
+            margin-bottom: 15px;
+        }
+
+        .file-upload-text {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        .file-upload-hint {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, var(--primary), var(--soft-blue));
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: var(--transition);
+            box-shadow: 0 4px 10px rgba(0, 60, 113, 0.3);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 60, 113, 0.4);
+        }
+
+        .upload-status {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .status-success {
+            background-color: rgba(228, 169, 60, 0.1);
+            border: 1px solid var(--accent);
+            color: var(--success);
+        }
+        
+        .status-error {
+            background-color: rgba(220, 53, 69, 0.1);
+            border: 1px solid var(--danger);
+            color: var(--danger);
+        }
+
+        /* Quiz Management Styles */
+        .quiz-section {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .quiz-form {
+            margin-top: 20px;
+        }
+        
+        .question-container {
+            background-color: var(--light);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--accent);
+        }
+        
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .question-number {
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+        
+        .remove-question {
+            background: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .option-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .option-input {
+            flex: 1;
+            padding: 10px 12px;
+            border: 2px solid var(--soft-blue);
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+        
+        .option-input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        
+        .correct-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+        
+        .correct-checkbox {
+            width: 18px;
+            height: 18px;
+        }
+        
+        .add-question-btn {
+            background: var(--soft-blue);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+        
+        .add-question-btn:hover {
+            background: var(--primary);
+        }
+        
+        .quiz-list {
+            margin-top: 30px;
+        }
+        
+        .quiz-item {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid var(--accent);
+        }
+        
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .quiz-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .quiz-meta {
+            display: flex;
+            gap: 15px;
+            font-size: 0.9rem;
+            color: var(--soft-blue);
+            margin-bottom: 10px;
+        }
+        
+        .quiz-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .action-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .preview-btn {
+            background-color: rgba(0, 60, 113, 0.1);
+            color: var(--primary);
+        }
+        
+        .preview-btn:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .edit-btn {
+            background-color: rgba(228, 169, 60, 0.2);
+            color: #B8842A;
+        }
+        
+        .edit-btn:hover {
+            background-color: var(--accent);
+            color: white;
+        }
+        
+        .delete-btn {
+            background-color: rgba(220, 53, 69, 0.2);
+            color: #dc3545;
+        }
+        
+        .delete-btn:hover {
+            background-color: #dc3545;
+            color: white;
+        }
+        
+        .no-quizzes {
+            text-align: center;
+            padding: 40px;
+            color: var(--gray);
+            font-style: italic;
+        }
+
+        /* Take Quiz Button */
+        .take-quiz-btn {
+            background: linear-gradient(135deg, var(--primary), var(--soft-blue));
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .take-quiz-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 60, 113, 0.3);
+        }
+
+        /* Quiz Modal Styles */
+        .quiz-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 60, 113, 0.9);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .quiz-modal-content {
+            background-color: white;
+            border-radius: 15px;
+            width: 100%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: modalFadeIn 0.3s ease;
+        }
+
+        .quiz-modal-header {
+            padding: 25px 30px;
+            border-bottom: 3px solid var(--accent);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 15px 15px 0 0;
+        }
+
+        .quiz-modal-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .quiz-modal-subtitle {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .quiz-modal-body {
+            padding: 30px;
+        }
+
+        .quiz-progress {
+            margin-bottom: 30px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background-color: var(--light);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, var(--accent), #F5C84D);
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            text-align: center;
+            margin-top: 10px;
+            color: var(--gray);
+            font-weight: 600;
+        }
+
+        .question-container-modal {
+            margin-bottom: 30px;
+        }
+
+        .question-text-modal {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option-item {
+            padding: 15px 20px;
+            border: 2px solid var(--soft-blue);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .option-item:hover {
+            border-color: var(--accent);
+            background-color: rgba(228, 169, 60, 0.05);
+        }
+
+        .option-item.selected {
+            border-color: var(--accent);
+            background-color: rgba(228, 169, 60, 0.1);
+        }
+
+        .option-letter {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: var(--soft-blue);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .option-item.selected .option-letter {
+            background: var(--accent);
+        }
+
+        .option-text {
+            flex: 1;
+            font-size: 1.1rem;
+        }
+
+        .quiz-modal-footer {
+            padding: 20px 30px;
+            border-top: 2px solid var(--soft-blue);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .quiz-nav-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .prev-btn {
+            background: var(--light);
+            color: var(--gray);
+            border: 2px solid var(--soft-blue);
+        }
+
+        .prev-btn:hover:not(:disabled) {
+            background: var(--soft-blue);
+            color: white;
+        }
+
+        .next-btn, .submit-btn {
+            background: linear-gradient(135deg, var(--accent), #F5C84D);
+            color: white;
+        }
+
+        .next-btn:hover, .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(228, 169, 60, 0.4);
+        }
+
+        .btn-disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        /* Results Modal */
+        .results-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 60, 113, 0.9);
+            z-index: 3000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .results-content {
+            background-color: white;
+            border-radius: 15px;
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+            padding: 40px 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: modalFadeIn 0.3s ease;
+        }
+
+        .results-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--success), #5cb85c);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 2.5rem;
+            color: white;
+        }
+
+        .results-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .results-score {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin: 20px 0;
+        }
+
+        .results-details {
+            margin: 25px 0;
+            text-align: left;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .result-item {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 4px solid var(--soft-blue);
+        }
+
+        .result-item.correct {
+            border-left-color: var(--success);
+            background-color: rgba(75, 181, 67, 0.1);
+        }
+
+        .result-item.incorrect {
+            border-left-color: var(--danger);
+            background-color: rgba(220, 53, 69, 0.1);
+        }
+
+        .question-result {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .answer-result {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        .correct-answer {
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        .close-results-btn {
+            background: linear-gradient(135deg, var(--primary), var(--soft-blue));
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 20px;
+        }
+
+        .close-results-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 60, 113, 0.4);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 60, 113, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background-color: white;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            animation: modalFadeIn 0.3s ease;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .modal-header {
+            padding: 20px 25px;
+            border-bottom: 2px solid var(--soft-blue);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray);
+            transition: var(--transition);
+        }
+
+        .close-btn:hover {
+            color: var(--accent);
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .modal-footer {
+            padding: 20px 25px;
+            border-top: 2px solid var(--soft-blue);
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+        }
+
+        .cancel-btn, .save-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .cancel-btn {
+            background-color: var(--light);
+            color: var(--gray);
+            border: 2px solid var(--soft-blue);
+        }
+
+        .cancel-btn:hover {
+            background-color: var(--soft-blue);
+            color: white;
+        }
+
+        .save-btn {
+            background: linear-gradient(135deg, var(--accent), #F5C84D);
+            color: white;
+        }
+
+        .save-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(228, 169, 60, 0.4);
+        }
+
+        /* Page Sections */
+        .page-section {
+            display: none;
+        }
+
+        .page-section.active {
+            display: block;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .login-box {
+                padding: 40px 30px;
+            }
+
+            .sidebar {
+                width: 70px;
+            }
+
+            .sidebar-header h2,
+            .sidebar-subtitle,
+            .menu-item span,
+            .logout-btn span {
+                display: none;
+            }
+
+            .logo-container {
+                flex-direction: column;
+            }
+
+            .main-content {
+                margin-left: 70px;
+            }
+
+            .menu-item {
+                justify-content: center;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .header {
+                padding: 0 15px;
+            }
+
+            .content {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header-left h1 {
+                font-size: 1.3rem;
+            }
+
+            .user-profile span {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Page -->
+    <div class="login-container" id="loginPage">
+        <div class="login-box">
+            <div class="login-logo">
+                <div class="login-logo-icon">9</div>
+                <div class="login-title">CLASS 9</div>
+                <div class="login-subtitle">Admin Panel Login</div>
+            </div>
+
+            <div class="login-error" id="loginError">
+                Invalid username or password!
+            </div>
+
+            <form class="login-form" id="loginForm">
+                <div class="login-form-group">
+                    <label class="login-label">Username</label>
+                    <input type="text" class="login-input" id="loginUsername" placeholder="Enter your username" required>
+                </div>
+
+                <div class="login-form-group">
+                    <label class="login-label">Password</label>
+                    <input type="password" class="login-input" id="loginPassword" placeholder="Enter your password" required>
+                </div>
+
+                <button type="submit" class="login-btn">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div class="app-container" id="appContainer">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-container">
+                    <div class="logo">9</div>
+                    <h2>CLASS</h2>
+                </div>
+                <div class="sidebar-subtitle">Admin Panel</div>
+            </div>
+            <div class="sidebar-menu">
+                <div class="menu-item active" data-page="dashboard">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </div>
+                <div class="menu-item" data-page="user-manager">
+                    <i class="fas fa-users"></i>
+                    <span>User Manager</span>
+                </div>
+                <div class="menu-item" data-page="content-management">
+                    <i class="fas fa-book"></i>
+                    <span>Content Management</span>
+                </div>
+            </div>
+            <button class="logout-btn" id="logoutBtn">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </button>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <div class="header">
+                <div class="header-left">
+                    <h1 id="pageTitle">Dashboard</h1>
+                </div>
+                <div class="header-right">
+                    <div class="user-profile">
+                        <div class="user-avatar" id="userAvatar">AD</div>
+                        <span id="currentUser">Admin User</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Sections -->
+            <div class="content">
+                <!-- Dashboard Section -->
+                <div id="dashboard" class="page-section active">
+                    <div class="dashboard-grid" id="subjectsGrid">
+                        <!-- Subjects will be dynamically loaded here -->
+                    </div>
+                </div>
+
+                <!-- Subject Detail Section -->
+                <div id="subject-detail" class="page-section">
+                    <div class="subject-detail">
+                        <button class="back-btn" id="backToDashboard">
+                            <i class="fas fa-arrow-left"></i> Back to Dashboard
+                        </button>
+                        <div class="detail-header">
+                            <div class="detail-title" id="subjectTitle">Subject Name</div>
+                        </div>
+                        <div class="content-list" id="subjectContentList">
+                            <!-- Content will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User Manager Section -->
+                <div id="user-manager" class="page-section">
+                    <div class="user-manager-header">
+                        <div class="user-manager-title">User Management</div>
+                        <button class="add-user-btn" id="openModalBtn">
+                            <i class="fas fa-plus"></i>
+                            Add New User
+                        </button>
+                    </div>
+
+                    <div class="user-table-container">
+                        <table class="user-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Username</th>
+                                    <th>Password</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="userTableBody">
+                                <!-- Users will be dynamically added here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Content Management Section -->
+                <div id="content-management" class="page-section">
+                    <!-- Upload File Section -->
+                    <div class="content-section">
+                        <h2 class="section-title">Content Upload</h2>
+                        <p class="section-subtitle">Upload educational materials and resources</p>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="contentTitle">Title</label>
+                            <input type="text" class="form-input" id="contentTitle" placeholder="Enter content title">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="contentDescription">Description</label>
+                            <textarea class="form-textarea" id="contentDescription" placeholder="Enter content description"></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="contentSubject">Subject</label>
+                            <select class="form-select" id="contentSubject">
+                                <option value="">Select a subject</option>
+                                <option value="kurdish">Kurdish</option>
+                                <option value="english">English</option>
+                                <option value="arabic">Arabic</option>
+                                <option value="math">Mathematics</option>
+                                <option value="science">Science</option>
+                                <option value="social">Social Studies</option>
+                                <option value="social-value">Social Value</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Upload File</label>
+                            <div class="file-upload-container" id="fileUploadArea">
+                                <div class="file-upload-icon">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                </div>
+                                <div class="file-upload-text">Click to upload or drag and drop</div>
+                                <div class="file-upload-hint">PDF, DOC, PPT, Images (Max. 10MB)</div>
+                                <input type="file" class="file-input" id="fileInput">
+                            </div>
+                            <div class="upload-status" id="uploadStatus"></div>
+                        </div>
+                        
+                        <button class="submit-btn" id="uploadContentBtn">
+                            <i class="fas fa-upload"></i>
+                            Upload Content
+                        </button>
+                    </div>
+
+                    <!-- Quiz Management Section -->
+                    <div class="quiz-section">
+                        <h2 class="section-title">Quiz Management</h2>
+                        <p class="section-subtitle">Create and manage quizzes for different subjects</p>
+                        
+                        <form class="quiz-form" id="quizForm">
+                            <div class="form-group">
+                                <label class="form-label" for="quizTitle">Quiz Title</label>
+                                <input type="text" class="form-input" id="quizTitle" placeholder="Enter quiz title" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="quizSubject">Subject</label>
+                                <select class="form-select" id="quizSubject" required>
+                                    <option value="">Select a subject</option>
+                                    <option value="kurdish">Kurdish</option>
+                                    <option value="english">English</option>
+                                    <option value="arabic">Arabic</option>
+                                    <option value="math">Mathematics</option>
+                                    <option value="science">Science</option>
+                                    <option value="social">Social Studies</option>
+                                    <option value="social-value">Social Value</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="quizDescription">Description</label>
+                                <textarea class="form-textarea" id="quizDescription" placeholder="Enter quiz description"></textarea>
+                            </div>
+                            
+                            <h3 style="margin: 20px 0 15px; color: var(--primary);">Questions</h3>
+                            
+                            <div id="questionsContainer">
+                                <!-- Questions will be dynamically added here -->
+                            </div>
+                            
+                            <button type="button" class="add-question-btn" id="addQuestionBtn">
+                                <i class="fas fa-plus"></i>
+                                Add Question
+                            </button>
+                            
+                            <button class="submit-btn" id="saveQuizBtn">
+                                <i class="fas fa-save"></i>
+                                Save Quiz
+                            </button>
+                        </form>
+                        
+                        <div class="quiz-list">
+                            <h3 style="margin-bottom: 20px; color: var(--primary);">Existing Quizzes</h3>
+                            <div id="quizzesList">
+                                <!-- Quizzes will be dynamically added here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add User Modal -->
+    <div class="modal" id="userModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Add New User</div>
+                <button class="close-btn" id="closeModalBtn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="userForm">
+                    <div class="form-group">
+                        <label class="form-label" for="name">Full Name</label>
+                        <input type="text" class="form-input" id="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="username">Username</label>
+                        <input type="text" class="form-input" id="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="password">Password</label>
+                        <input type="password" class="form-input" id="password" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="email">Email</label>
+                        <input type="email" class="form-input" id="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="role">Role</label>
+                        <select class="form-input" id="role" required>
+                            <option value="">Select Role</option>
+                            <option value="Admin">Admin</option>
+                            <option value="Editor">Editor</option>
+                            <option value="Viewer">Viewer</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="cancel-btn" id="cancelBtn">Cancel</button>
+                <button class="save-btn" id="saveBtn">Save User</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quiz Taking Modal -->
+    <div class="quiz-modal" id="quizModal">
+        <div class="quiz-modal-content">
+            <div class="quiz-modal-header">
+                <div class="quiz-modal-title" id="quizModalTitle">Quiz Title</div>
+                <div class="quiz-modal-subtitle" id="quizModalSubtitle">Subject • Questions</div>
+            </div>
+            <div class="quiz-modal-body">
+                <div class="quiz-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <div class="progress-text" id="progressText">Question 1 of 5</div>
+                </div>
+                
+                <div class="question-container-modal">
+                    <div class="question-text-modal" id="currentQuestionText">Question text will appear here</div>
+                    <div class="options-container" id="optionsContainer">
+                        <!-- Options will be dynamically added here -->
+                    </div>
+                </div>
+            </div>
+            <div class="quiz-modal-footer">
+                <button class="quiz-nav-btn prev-btn" id="prevQuestionBtn" disabled>
+                    <i class="fas fa-arrow-left"></i> Previous
+                </button>
+                <button class="quiz-nav-btn next-btn" id="nextQuestionBtn">
+                    Next <i class="fas fa-arrow-right"></i>
+                </button>
+                <button class="quiz-nav-btn submit-btn" id="submitQuizBtn" style="display: none;">
+                    Submit Quiz <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Modal -->
+    <div class="results-modal" id="resultsModal">
+        <div class="results-content">
+            <div class="results-icon">
+                <i class="fas fa-trophy"></i>
+            </div>
+            <div class="results-title">Quiz Completed!</div>
+            <div class="results-score" id="resultsScore">0/0</div>
+            <div class="results-details" id="resultsDetails">
+                <!-- Results will be dynamically added here -->
+            </div>
+            <button class="close-results-btn" id="closeResultsBtn">
+                Close Results
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // ========== GLOBAL VARIABLES ==========
+        let users = [
+            { id: 1, name: "Admin User", username: "admin", password: "admin123", email: "admin@class9.com", role: "Admin" },
+            { id: 2, name: "John Smith", username: "john", password: "john123", email: "john@class9.com", role: "Editor" },
+            { id: 3, name: "Sarah Johnson", username: "sarah", password: "sarah123", email: "sarah@class9.com", role: "Viewer" }
+        ];
+
+        let currentLoggedInUser = null;
+
+        let subjects = [
+            { id: 'kurdish', name: 'Kurdish', icon: 'fa-language', description: 'Language settings and content' },
+            { id: 'english', name: 'English', icon: 'fa-language', description: 'Language settings and content' },
+            { id: 'arabic', name: 'Arabic', icon: 'fa-language', description: 'Language settings and content' },
+            { id: 'math', name: 'Math', icon: 'fa-calculator', description: 'Mathematics resources' },
+            { id: 'science', name: 'Science', icon: 'fa-flask', description: 'Scientific content and tools' },
+            { id: 'social', name: 'Social', icon: 'fa-globe-americas', description: 'Social studies resources' },
+            { id: 'social-value', name: 'Social Value', icon: 'fa-hands-helping', description: 'Community engagement metrics' }
+        ];
+
+        // Modified contentData to include all types of content
+        let contentData = {
+            kurdish: [],
+            english: [],
+            arabic: [],
+            math: [],
+            science: [],
+            social: [],
+            'social-value': []
+        };
+
+        // Quiz data structure
+        let quizzes = [
+            {
+                id: 1,
+                title: "Math Basics Quiz",
+                subject: "math",
+                description: "Test your basic math skills",
+                questions: [
+                    {
+                        id: 1,
+                        text: "What is 5 + 7?",
+                        options: ["10", "11", "12", "13"],
+                        correctAnswer: 2
+                    },
+                    {
+                        id: 2,
+                        text: "What is 9 × 6?",
+                        options: ["54", "56", "58", "60"],
+                        correctAnswer: 0
+                    }
+                ],
+                createdDate: '2024-01-15',
+                type: 'quiz'
+            },
+            {
+                id: 2,
+                title: "English Vocabulary Quiz",
+                subject: "english",
+                description: "Test your English vocabulary",
+                questions: [
+                    {
+                        id: 1,
+                        text: "What is the synonym of 'happy'?",
+                        options: ["Sad", "Joyful", "Angry", "Tired"],
+                        correctAnswer: 1
+                    }
+                ],
+                createdDate: '2024-01-10',
+                type: 'quiz'
+            }
+        ];
+
+        let questionCounter = 0;
+
+        // ========== LOGIN FUNCTIONALITY ==========
+        const loginPage = document.getElementById('loginPage');
+        const appContainer = document.getElementById('appContainer');
+        const loginForm = document.getElementById('loginForm');
+        const loginError = document.getElementById('loginError');
+        const logoutBtn = document.getElementById('logoutBtn');
+
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+
+            const user = users.find(u => u.username === username && u.password === password);
+
+            if (user) {
+                currentLoggedInUser = user;
+                loginError.style.display = 'none';
+                loginPage.style.display = 'none';
+                appContainer.classList.add('active');
+                
+                // Update user info in header
+                document.getElementById('currentUser').textContent = user.name;
+                document.getElementById('userAvatar').textContent = user.name.substring(0, 2).toUpperCase();
+                
+                // Clear login form
+                loginForm.reset();
+            } else {
+                loginError.style.display = 'block';
+            }
+        });
+
+        logoutBtn.addEventListener('click', () => {
+            if (confirm('Are you sure you want to logout?')) {
+                currentLoggedInUser = null;
+                appContainer.classList.remove('active');
+                loginPage.style.display = 'flex';
+                loginForm.reset();
+            }
+        });
+
+        // ========== RENDER SUBJECTS ON DASHBOARD ==========
+        function renderSubjects() {
+            const subjectsGrid = document.getElementById('subjectsGrid');
+            subjectsGrid.innerHTML = '';
+
+            subjects.forEach(subject => {
+                const gridItem = document.createElement('div');
+                gridItem.className = 'grid-item';
+                gridItem.dataset.subjectId = subject.id;
+                gridItem.innerHTML = `
+                    <div class="grid-icon">
+                        <i class="fas ${subject.icon}"></i>
+                    </div>
+                    <div class="grid-title">${subject.name}</div>
+                    <div class="grid-desc">${subject.description}</div>
+                `;
+                
+                gridItem.addEventListener('click', () => {
+                    openSubjectDetail(subject.id, subject.name);
+                });
+                
+                subjectsGrid.appendChild(gridItem);
+            });
+        }
+
+        // ========== SUBJECT DETAIL VIEW ==========
+        function openSubjectDetail(subjectId, subjectName) {
+            document.getElementById('pageTitle').textContent = subjectName;
+            document.getElementById('subjectTitle').textContent = subjectName;
+            
+            // Update menu
+            document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
+            
+            // Hide dashboard, show subject detail
+            document.getElementById('dashboard').classList.remove('active');
+            document.getElementById('subject-detail').classList.add('active');
+            
+            // Load content for this subject
+            renderSubjectContent(subjectId);
+        }
+
+        function renderSubjectContent(subjectId) {
+            const contentList = document.getElementById('subjectContentList');
+            const fileContents = contentData[subjectId] || [];
+            const quizContents = quizzes.filter(quiz => quiz.subject === subjectId);
+            
+            const allContents = [
+                ...fileContents.map(item => ({...item, type: 'file'})),
+                ...quizContents.map(item => ({...item, type: 'quiz'}))
+            ];
+
+            if (allContents.length === 0) {
+                contentList.innerHTML = '<p style="color: var(--gray); text-align: center; padding: 40px;">No content available yet. Add content from Content Management.</p>';
+                return;
+            }
+
+            contentList.innerHTML = '';
+            allContents.forEach(content => {
+                const contentItem = document.createElement('div');
+                contentItem.className = 'content-item';
+                
+                let typeBadge = '';
+                let description = '';
+                let metaInfo = '';
+                let actionButtons = '';
+                
+                if (content.type === 'file') {
+                    typeBadge = '<span class="content-item-type">File</span>';
+                    description = content.description;
+                    metaInfo = `
+                        <span><i class="fas fa-file"></i> ${content.fileName}</span>
+                        <span><i class="fas fa-calendar"></i> ${content.date}</span>
+                    `;
+                    actionButtons = `
+                        <button class="content-action-btn view-btn" onclick="viewContent('${content.type}', ${content.id})">
+                            <i class="fas fa-eye"></i> View
+                        </button>
+                        <button class="content-action-btn delete-content-btn" onclick="deleteContent('${content.type}', ${content.id}, '${subjectId}')">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    `;
+                } else if (content.type === 'quiz') {
+                    typeBadge = '<span class="content-item-type">Quiz</span>';
+                    description = content.description;
+                    metaInfo = `
+                        <span><i class="fas fa-question-circle"></i> ${content.questions.length} questions</span>
+                        <span><i class="fas fa-calendar"></i> ${content.createdDate}</span>
+                    `;
+                    actionButtons = `
+                        <button class="take-quiz-btn" onclick="takeQuiz(${content.id})">
+                            <i class="fas fa-play"></i> Take Quiz
+                        </button>
+                        <button class="content-action-btn view-btn" onclick="viewContent('${content.type}', ${content.id})">
+                            <i class="fas fa-info-circle"></i> Details
+                        </button>
+                        <button class="content-action-btn delete-content-btn" onclick="deleteContent('${content.type}', ${content.id}, '${subjectId}')">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    `;
+                }
+                
+                contentItem.innerHTML = `
+                    <div class="content-item-info">
+                        <div class="content-item-title">${content.title} ${typeBadge}</div>
+                        <div class="content-item-desc">${description}</div>
+                        <div class="content-item-meta">${metaInfo}</div>
+                    </div>
+                    <div class="content-item-actions">
+                        ${actionButtons}
+                    </div>
+                `;
+                contentList.appendChild(contentItem);
+            });
+        }
+
+        // View content function
+        window.viewContent = function(type, id) {
+            if (type === 'file') {
+                // Find file content
+                let fileContent = null;
+                for (const subject in contentData) {
+                    fileContent = contentData[subject].find(item => item.id === id);
+                    if (fileContent) break;
+                }
+                if (fileContent) {
+                    alert(`Viewing File: ${fileContent.title}\n\nDescription: ${fileContent.description}\nFile: ${fileContent.fileName}`);
+                }
+            } else if (type === 'quiz') {
+                // For quizzes, show information but don't take the quiz
+                const quiz = quizzes.find(q => q.id === id);
+                if (quiz) {
+                    let quizInfo = `Quiz: ${quiz.title}\n\nDescription: ${quiz.description}\nSubject: ${getSubjectName(quiz.subject)}\nQuestions: ${quiz.questions.length}\n\nClick "Take Quiz" to start the quiz.`;
+                    alert(quizInfo);
+                }
+            }
+        }
+
+        // Delete content function
+        window.deleteContent = function(type, id, subjectId) {
+            if (confirm('Are you sure you want to delete this content?')) {
+                if (type === 'file') {
+                    // Remove from contentData
+                    contentData[subjectId] = contentData[subjectId].filter(item => item.id !== id);
+                } else if (type === 'quiz') {
+                    // Remove from quizzes
+                    quizzes = quizzes.filter(quiz => quiz.id !== id);
+                }
+                
+                // Refresh the content list
+                renderSubjectContent(subjectId);
+                alert('Content deleted successfully!');
+            }
+        }
+
+        document.getElementById('backToDashboard').addEventListener('click', () => {
+            document.getElementById('subject-detail').classList.remove('active');
+            document.getElementById('dashboard').classList.add('active');
+            document.getElementById('pageTitle').textContent = 'Dashboard';
+            
+            // Reactivate dashboard menu
+            document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
+            document.querySelector('[data-page="dashboard"]').classList.add('active');
+        });
+
+        // ========== PAGE NAVIGATION ==========
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const pageId = this.getAttribute('data-page');
+                if (pageId) {
+                    // Update active menu item
+                    document.querySelector('.menu-item.active').classList.remove('active');
+                    this.classList.add('active');
+                    
+                    // Update page title
+                    document.getElementById('pageTitle').textContent = 
+                        pageId === 'dashboard' ? 'Dashboard' :
+                        pageId === 'user-manager' ? 'User Manager' :
+                        pageId === 'content-management' ? 'Content Management' : 'Admin Panel';
+                    
+                    // Show correct page section
+                    document.querySelectorAll('.page-section').forEach(section => {
+                        section.classList.remove('active');
+                    });
+                    document.getElementById(pageId).classList.add('active');
+                }
+            });
+        });
+
+        // ========== USER MANAGER FUNCTIONALITY ==========
+        const userTableBody = document.getElementById('userTableBody');
+        const userModal = document.getElementById('userModal');
+        const openModalBtn = document.getElementById('openModalBtn');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const saveBtn = document.getElementById('saveBtn');
+        const userForm = document.getElementById('userForm');
+
+        function renderUserTable() {
+            userTableBody.innerHTML = '';
+            
+            users.forEach(user => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${user.id}</td>
+                    <td>${user.name}</td>
+                    <td>${user.username}</td>
+                    <td>${user.password}</td>
+                    <td>${user.email}</td>
+                    <td>${user.role}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="edit-btn" onclick="editUser(${user.id})">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button class="delete-btn" onclick="deleteUser(${user.id})">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </div>
+                    </td>
+                `;
+                userTableBody.appendChild(row);
+            });
+        }
+
+        openModalBtn.addEventListener('click', () => {
+            userForm.reset();
+            userModal.style.display = 'flex';
+            document.getElementById('name').focus();
+        });
+
+        function closeModal() {
+            userModal.style.display = 'none';
+        }
+
+        closeModalBtn.addEventListener('click', closeModal);
+        cancelBtn.addEventListener('click', closeModal);
+
+        saveBtn.addEventListener('click', () => {
+            const name = document.getElementById('name').value;
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const email = document.getElementById('email').value;
+            const role = document.getElementById('role').value;
+            
+            if (name && username && password && email && role) {
+                const newId = users.length > 0 ? Math.max(...users.map(user => user.id)) + 1 : 1;
+                
+                users.push({
+                    id: newId,
+                    name,
+                    username,
+                    password,
+                    email,
+                    role
+                });
+                
+                renderUserTable();
+                closeModal();
+                alert('User added successfully! They can now login with their credentials.');
+            } else {
+                alert('Please fill in all fields');
+            }
+        });
+
+        window.deleteUser = function(id) {
+            if (confirm('Are you sure you want to delete this user?')) {
+                users = users.filter(user => user.id !== id);
+                renderUserTable();
+                alert('User deleted successfully!');
+            }
+        };
+
+        window.editUser = function(id) {
+            alert(`Edit functionality for user ID ${id} would be implemented here`);
+        };
+
+        // ========== CONTENT UPLOAD FUNCTIONALITY ==========
+        const fileUploadArea = document.getElementById('fileUploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const uploadContentBtn = document.getElementById('uploadContentBtn');
+        const uploadStatus = document.getElementById('uploadStatus');
+
+        fileUploadArea.addEventListener('click', () => {
+            fileInput.click();
+        });
+        
+        fileUploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            fileUploadArea.style.borderColor = 'var(--accent)';
+            fileUploadArea.style.backgroundColor = 'rgba(228, 169, 60, 0.1)';
+        });
+        
+        fileUploadArea.addEventListener('dragleave', () => {
+            fileUploadArea.style.borderColor = 'var(--soft-blue)';
+            fileUploadArea.style.backgroundColor = 'rgba(143, 168, 197, 0.05)';
+        });
+        
+        fileUploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            fileUploadArea.style.borderColor = 'var(--soft-blue)';
+            fileUploadArea.style.backgroundColor = 'rgba(143, 168, 197, 0.05)';
+            
+            if (e.dataTransfer.files.length) {
+                fileInput.files = e.dataTransfer.files;
+                handleFileSelection(e.dataTransfer.files[0]);
+            }
+        });
+        
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length) {
+                handleFileSelection(fileInput.files[0]);
+            }
+        });
+
+        function handleFileSelection(file) {
+            const maxSize = 10 * 1024 * 1024;
+            if (file.size > maxSize) {
+                showStatus('File is too large. Maximum size is 10MB.', 'error');
+                return;
+            }
+            
+            const allowedTypes = [
+                'application/pdf',
+                'application/msword',
+                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                'application/vnd.ms-powerpoint',
+                'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+                'image/jpeg',
+                'image/png',
+                'image/gif'
+            ];
+            
+            if (!allowedTypes.includes(file.type)) {
+                showStatus('File type not allowed. Please upload PDF, DOC, PPT, or image files.', 'error');
+                return;
+            }
+            
+            updateFileUploadText(`${file.name} (${formatFileSize(file.size)})`);
+            showStatus('File selected and ready for upload', 'success');
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        function showStatus(message, type) {
+            uploadStatus.textContent = message;
+            uploadStatus.className = `upload-status status-${type}`;
+            uploadStatus.style.display = 'block';
+            
+            if (type === 'success') {
+                setTimeout(() => {
+                    uploadStatus.style.display = 'none';
+                }, 5000);
+            }
+        }
+
+        function updateFileUploadText(text) {
+            const uploadText = fileUploadArea.querySelector('.file-upload-text');
+            uploadText.textContent = text;
+        }
+
+        uploadContentBtn.addEventListener('click', function() {
+            const title = document.getElementById('contentTitle').value;
+            const description = document.getElementById('contentDescription').value;
+            const subject = document.getElementById('contentSubject').value;
+            const file = fileInput.files[0];
+            
+            if (!title || !description || !subject || !file) {
+                showStatus('Please fill in all fields and select a file.', 'error');
+                return;
+            }
+            
+            // Add content to the subject
+            const newContent = {
+                id: Date.now(),
+                title: title,
+                description: description,
+                fileName: file.name,
+                date: new Date().toLocaleDateString(),
+                type: 'file'
+            };
+            
+            if (!contentData[subject]) {
+                contentData[subject] = [];
+            }
+            
+            contentData[subject].push(newContent);
+            
+            showStatus('Content uploaded successfully!', 'success');
+            
+            // Reset form
+            document.getElementById('contentTitle').value = '';
+            document.getElementById('contentDescription').value = '';
+            document.getElementById('contentSubject').selectedIndex = 0;
+            fileInput.value = '';
+            updateFileUploadText('Click to upload or drag and drop');
+            
+            alert(`Content uploaded successfully! You can view it by clicking on the ${getSubjectName(subject)} subject in the dashboard.`);
+        });
+
+        // ========== QUIZ MANAGEMENT FUNCTIONALITY ==========
+        const addQuestionBtn = document.getElementById('addQuestionBtn');
+        const questionsContainer = document.getElementById('questionsContainer');
+        const quizForm = document.getElementById('quizForm');
+        const saveQuizBtn = document.getElementById('saveQuizBtn');
+        const quizzesList = document.getElementById('quizzesList');
+
+        // Add question function
+        function addQuestion() {
+            questionCounter++;
+            const questionDiv = document.createElement('div');
+            questionDiv.className = 'question-container';
+            questionDiv.innerHTML = `
+                <div class="question-header">
+                    <div class="question-number">Question ${questionCounter}</div>
+                    <button type="button" class="remove-question" onclick="removeQuestion(this)">
+                        <i class="fas fa-trash"></i> Remove
+                    </button>
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-input question-text" placeholder="Enter question text" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Options</label>
+                    <div class="option-row">
+                        <input type="text" class="option-input" placeholder="Option A" required>
+                        <div class="correct-option">
+                            <input type="radio" class="correct-checkbox" name="correct-${questionCounter}" value="0" required>
+                            <span>Correct</span>
+                        </div>
+                    </div>
+                    <div class="option-row">
+                        <input type="text" class="option-input" placeholder="Option B" required>
+                        <div class="correct-option">
+                            <input type="radio" class="correct-checkbox" name="correct-${questionCounter}" value="1" required>
+                            <span>Correct</span>
+                        </div>
+                    </div>
+                    <div class="option-row">
+                        <input type="text" class="option-input" placeholder="Option C">
+                        <div class="correct-option">
+                            <input type="radio" class="correct-checkbox" name="correct-${questionCounter}" value="2">
+                            <span>Correct</span>
+                        </div>
+                    </div>
+                    <div class="option-row">
+                        <input type="text" class="option-input" placeholder="Option D">
+                        <div class="correct-option">
+                            <input type="radio" class="correct-checkbox" name="correct-${questionCounter}" value="3">
+                            <span>Correct</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            questionsContainer.appendChild(questionDiv);
+        }
+
+        // Remove question function
+        window.removeQuestion = function(button) {
+            const questionContainer = button.closest('.question-container');
+            questionContainer.remove();
+            updateQuestionNumbers();
+        }
+
+        // Update question numbers after removal
+        function updateQuestionNumbers() {
+            const questionContainers = document.querySelectorAll('.question-container');
+            questionCounter = 0;
+            
+            questionContainers.forEach(container => {
+                questionCounter++;
+                container.querySelector('.question-number').textContent = `Question ${questionCounter}`;
+            });
+        }
+
+        // Render quizzes list
+        function renderQuizzes() {
+            quizzesList.innerHTML = '';
+            
+            if (quizzes.length === 0) {
+                quizzesList.innerHTML = '<div class="no-quizzes">No quizzes created yet. Create your first quiz above.</div>';
+                return;
+            }
+            
+            quizzes.forEach(quiz => {
+                const quizItem = document.createElement('div');
+                quizItem.className = 'quiz-item';
+                quizItem.innerHTML = `
+                    <div class="quiz-header">
+                        <div class="quiz-title">${quiz.title}</div>
+                        <div class="quiz-subject-badge" style="background: var(--soft-blue); color: white; padding: 4px 10px; border-radius: 20px; font-size: 0.8rem;">
+                            ${getSubjectName(quiz.subject)}
+                        </div>
+                    </div>
+                    <div class="quiz-meta">
+                        <span><i class="fas fa-question-circle"></i> ${quiz.questions.length} questions</span>
+                        <span><i class="fas fa-calendar"></i> Created: ${quiz.createdDate || 'Unknown'}</span>
+                    </div>
+                    <div class="quiz-description">${quiz.description}</div>
+                    <div class="quiz-actions">
+                        <button class="action-btn preview-btn" onclick="previewQuiz(${quiz.id})">
+                            <i class="fas fa-eye"></i> Preview
+                        </button>
+                        <button class="action-btn edit-btn" onclick="editQuiz(${quiz.id})">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button class="action-btn delete-btn" onclick="deleteQuiz(${quiz.id})">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </div>
+                `;
+                quizzesList.appendChild(quizItem);
+            });
+        }
+
+        // Get subject name from ID
+        function getSubjectName(subjectId) {
+            const subject = subjects.find(s => s.id === subjectId);
+            return subject ? subject.name : subjectId;
+        }
+
+        // Save quiz function
+        saveQuizBtn.addEventListener('click', function() {
+            const title = document.getElementById('quizTitle').value;
+            const subject = document.getElementById('quizSubject').value;
+            const description = document.getElementById('quizDescription').value;
+            
+            if (!title || !subject) {
+                alert('Please fill in at least the title and subject fields.');
+                return;
+            }
+            
+            const questionContainers = document.querySelectorAll('.question-container');
+            
+            if (questionContainers.length === 0) {
+                alert('Please add at least one question to the quiz.');
+                return;
+            }
+            
+            const questions = [];
+            
+            questionContainers.forEach(container => {
+                const questionText = container.querySelector('.question-text').value;
+                const optionInputs = container.querySelectorAll('.option-input');
+                const correctRadio = container.querySelector('.correct-checkbox:checked');
+                
+                if (!questionText) {
+                    alert('Please fill in all question texts.');
+                    return;
+                }
+                
+                if (!correctRadio) {
+                    alert('Please select a correct answer for each question.');
+                    return;
+                }
+                
+                const options = [];
+                optionInputs.forEach(input => {
+                    if (input.value.trim() !== '') {
+                        options.push(input.value);
+                    }
+                });
+                
+                if (options.length < 2) {
+                    alert('Each question must have at least 2 options.');
+                    return;
+                }
+                
+                questions.push({
+                    id: questions.length + 1,
+                    text: questionText,
+                    options: options,
+                    correctAnswer: parseInt(correctRadio.value)
+                });
+            });
+            
+            const newQuiz = {
+                id: quizzes.length > 0 ? Math.max(...quizzes.map(q => q.id)) + 1 : 1,
+                title: title,
+                subject: subject,
+                description: description,
+                questions: questions,
+                createdDate: new Date().toLocaleDateString(),
+                type: 'quiz'
+            };
+            
+            quizzes.push(newQuiz);
+            renderQuizzes();
+            
+            // Reset form
+            quizForm.reset();
+            questionsContainer.innerHTML = '';
+            questionCounter = 0;
+            
+            alert(`Quiz saved successfully! You can view it by clicking on the ${getSubjectName(subject)} subject in the dashboard.`);
+        });
+
+        // Preview quiz function
+        window.previewQuiz = function(quizId) {
+            const quiz = quizzes.find(q => q.id === quizId);
+            if (quiz) {
+                alert(`Preview for "${quiz.title}"\n\nSubject: ${getSubjectName(quiz.subject)}\nDescription: ${quiz.description}\nQuestions: ${quiz.questions.length}`);
+            }
+        }
+
+        // Edit quiz function
+        window.editQuiz = function(quizId) {
+            alert(`Edit functionality for quiz ID ${quizId} would be implemented here`);
+        }
+
+        // Delete quiz function
+        window.deleteQuiz = function(quizId) {
+            if (confirm('Are you sure you want to delete this quiz?')) {
+                quizzes = quizzes.filter(q => q.id !== quizId);
+                renderQuizzes();
+                alert('Quiz deleted successfully!');
+            }
+        }
+
+        // ========== QUIZ TAKING FUNCTIONALITY ==========
+        const quizModal = document.getElementById('quizModal');
+        const resultsModal = document.getElementById('resultsModal');
+        const quizModalTitle = document.getElementById('quizModalTitle');
+        const quizModalSubtitle = document.getElementById('quizModalSubtitle');
+        const currentQuestionText = document.getElementById('currentQuestionText');
+        const optionsContainer = document.getElementById('optionsContainer');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        const prevQuestionBtn = document.getElementById('prevQuestionBtn');
+        const nextQuestionBtn = document.getElementById('nextQuestionBtn');
+        const submitQuizBtn = document.getElementById('submitQuizBtn');
+        const resultsScore = document.getElementById('resultsScore');
+        const resultsDetails = document.getElementById('resultsDetails');
+        const closeResultsBtn = document.getElementById('closeResultsBtn');
+
+        let currentQuiz = null;
+        let currentQuestionIndex = 0;
+        let userAnswers = [];
+        let quizResults = [];
+
+        // Function to open quiz for taking
+        window.takeQuiz = function(quizId) {
+            currentQuiz = quizzes.find(q => q.id === quizId);
+            if (!currentQuiz) return;
+
+            // Reset quiz state
+            currentQuestionIndex = 0;
+            userAnswers = new Array(currentQuiz.questions.length).fill(null);
+            quizResults = [];
+
+            // Set modal content
+            quizModalTitle.textContent = currentQuiz.title;
+            quizModalSubtitle.textContent = `${getSubjectName(currentQuiz.subject)} • ${currentQuiz.questions.length} questions`;
+            
+            // Show modal
+            quizModal.style.display = 'flex';
+            
+            // Load first question
+            loadQuestion(currentQuestionIndex);
+            updateProgress();
+        }
+
+        // Function to load a question
+        function loadQuestion(index) {
+            if (!currentQuiz || index < 0 || index >= currentQuiz.questions.length) return;
+
+            const question = currentQuiz.questions[index];
+            currentQuestionText.textContent = `${index + 1}. ${question.text}`;
+            
+            // Clear options container
+            optionsContainer.innerHTML = '';
+            
+            // Add options
+            question.options.forEach((option, optionIndex) => {
+                const optionItem = document.createElement('div');
+                optionItem.className = `option-item ${userAnswers[index] === optionIndex ? 'selected' : ''}`;
+                optionItem.innerHTML = `
+                    <div class="option-letter">${String.fromCharCode(65 + optionIndex)}</div>
+                    <div class="option-text">${option}</div>
+                `;
+                
+                optionItem.addEventListener('click', () => {
+                    selectOption(optionIndex);
+                });
+                
+                optionsContainer.appendChild(optionItem);
+            });
+
+            // Update navigation buttons
+            updateNavigationButtons();
+        }
+
+        // Function to select an option
+        function selectOption(optionIndex) {
+            userAnswers[currentQuestionIndex] = optionIndex;
+            
+            // Update UI to show selected option
+            const optionItems = optionsContainer.querySelectorAll('.option-item');
+            optionItems.forEach((item, index) => {
+                item.classList.toggle('selected', index === optionIndex);
+            });
+            
+            // Enable next button if not already enabled
+            if (nextQuestionBtn.disabled) {
+                nextQuestionBtn.disabled = false;
+            }
+        }
+
+        // Function to update navigation buttons
+        function updateNavigationButtons() {
+            // Previous button
+            prevQuestionBtn.disabled = currentQuestionIndex === 0;
+            
+            // Next/Submit button
+            const hasAnswer = userAnswers[currentQuestionIndex] !== null;
+            const isLastQuestion = currentQuestionIndex === currentQuiz.questions.length - 1;
+            
+            nextQuestionBtn.style.display = isLastQuestion ? 'none' : 'flex';
+            submitQuizBtn.style.display = isLastQuestion ? 'flex' : 'none';
+            
+            if (isLastQuestion) {
+                submitQuizBtn.disabled = !hasAnswer;
+            } else {
+                nextQuestionBtn.disabled = !hasAnswer;
+            }
+        }
+
+        // Function to update progress
+        function updateProgress() {
+            const progress = ((currentQuestionIndex + 1) / currentQuiz.questions.length) * 100;
+            progressFill.style.width = `${progress}%`;
+            progressText.textContent = `Question ${currentQuestionIndex + 1} of ${currentQuiz.questions.length}`;
+        }
+
+        // Navigation event listeners
+        prevQuestionBtn.addEventListener('click', () => {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                loadQuestion(currentQuestionIndex);
+                updateProgress();
+            }
+        });
+
+        nextQuestionBtn.addEventListener('click', () => {
+            if (currentQuestionIndex < currentQuiz.questions.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion(currentQuestionIndex);
+                updateProgress();
+            }
+        });
+
+        submitQuizBtn.addEventListener('click', () => {
+            calculateResults();
+            showResults();
+        });
+
+        // Function to calculate quiz results
+        function calculateResults() {
+            quizResults = [];
+            let correctCount = 0;
+
+            currentQuiz.questions.forEach((question, index) => {
+                const userAnswer = userAnswers[index];
+                const isCorrect = userAnswer === question.correctAnswer;
+                
+                if (isCorrect) {
+                    correctCount++;
+                }
+
+                quizResults.push({
+                    question: question.text,
+                    userAnswer: userAnswer,
+                    correctAnswer: question.correctAnswer,
+                    options: question.options,
+                    isCorrect: isCorrect
+                });
+            });
+
+            return {
+                score: correctCount,
+                total: currentQuiz.questions.length,
+                percentage: (correctCount / currentQuiz.questions.length) * 100
+            };
+        }
+
+        // Function to show results
+        function showResults() {
+            const results = calculateResults();
+            
+            // Update results modal
+            resultsScore.textContent = `${results.score}/${results.total}`;
+            
+            // Clear previous results
+            resultsDetails.innerHTML = '';
+            
+            // Add result details
+            quizResults.forEach((result, index) => {
+                const resultItem = document.createElement('div');
+                resultItem.className = `result-item ${result.isCorrect ? 'correct' : 'incorrect'}`;
+                
+                const userAnswerText = result.userAnswer !== null ? 
+                    `${String.fromCharCode(65 + result.userAnswer)}) ${result.options[result.userAnswer]}` : 
+                    'Not answered';
+                
+                const correctAnswerText = `${String.fromCharCode(65 + result.correctAnswer)}) ${result.options[result.correctAnswer]}`;
+                
+                resultItem.innerHTML = `
+                    <div class="question-result">${index + 1}. ${result.question}</div>
+                    <div class="answer-result">
+                        <strong>Your answer:</strong> ${userAnswerText}<br>
+                        <strong class="correct-answer">Correct answer:</strong> ${correctAnswerText}
+                    </div>
+                `;
+                
+                resultsDetails.appendChild(resultItem);
+            });
+            
+            // Close quiz modal and show results modal
+            quizModal.style.display = 'none';
+            resultsModal.style.display = 'flex';
+        }
+
+        // Close results modal
+        closeResultsBtn.addEventListener('click', () => {
+            resultsModal.style.display = 'none';
+        });
+
+        // Close modals when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === quizModal) {
+                if (confirm('Are you sure you want to quit the quiz? Your progress will be lost.')) {
+                    quizModal.style.display = 'none';
+                }
+            }
+            if (e.target === resultsModal) {
+                resultsModal.style.display = 'none';
+            }
+        });
+
+        // ========== INITIALIZE PAGE ==========
+        document.addEventListener('DOMContentLoaded', () => {
+            renderUserTable();
+            renderSubjects();
+            
+            // Initialize quiz functionality
+            addQuestionBtn.addEventListener('click', addQuestion);
+            renderQuizzes();
+            
+            // Add one initial question
+            addQuestion();
+        });
+    </script>
+</body>
+</html>
